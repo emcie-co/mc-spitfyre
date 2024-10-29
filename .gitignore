@@ -1,0 +1,4 @@
+node_modules
+*.exe
+__pycache__
+*.log
