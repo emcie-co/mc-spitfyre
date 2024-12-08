@@ -1,0 +1,14 @@
+git_path = "c:\\Program Files\\Git\\bin\\git.exe"
+root_path = "../.."
+
+[orgs.emcie-co.include]
+parlant = "develop"
+parlant-client-python = "main"
+parlant-client-typescript = "main"
+
+[orgs.emcie-co.paths]
+parlant-client-python = "parlant-sdks/parlant-client-python"
+parlant-client-typescript = "parlant-sdks/parlant-client-typescript"
+
+[orgs.parlant-io.include]
+website = "main"

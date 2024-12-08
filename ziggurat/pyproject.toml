@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "ziggurat"
+version = "0.1.0"
+description = ""
+authors = ["MCNatsu <nathan@emcie.co>"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+sismic = "^1.6.8"
+toml-dataclass = "^0.1.0"
+pydantic = "^2.10.1"
+gitpython = "^3.1.43"
+mypy = "^1.13.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.13.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

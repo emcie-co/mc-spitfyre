@@ -1,0 +1,16 @@
+# statechart.yaml
+statechart:
+  name: counter
+  preamble: |
+    # Any initialization code would go here if needed
+  root state:
+    name: root
+    initial: counting
+    states:
+      - name: counting
+        transitions:
+          - target: done
+            guard: is_limit_reached  # This will be a Python function
+            event: increment
+
+      - name: done

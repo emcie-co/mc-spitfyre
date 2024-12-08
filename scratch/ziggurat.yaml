@@ -1,0 +1,5 @@
+statechart:
+  name: The Ziggurat
+  description: The state of your workspace
+  root state: 
+    name: unknown
