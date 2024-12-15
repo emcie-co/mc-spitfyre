@@ -7,11 +7,28 @@ from _pytest.reports import TestReport
 _test_start_times: dict[str, datetime] = {}
 _test_results: dict[str, str] = {}
 
+PYTEST_TIMING_OUTPUT_PATH = "test_timing.csv"
+
+
 def pytest_configure(config: pytest.Config) -> None:
     """Create file with header if it doesn't exist, otherwise do nothing"""
-    if not os.path.exists("test_timings.txt"):
-        with open("test_timings.txt", "w") as f:
+    if not os.path.exists(PYTEST_TIMING_OUTPUT_PATH):
+        with open(PYTEST_TIMING_OUTPUT_PATH, "w") as f:
             f.write("test_name,start_time,end_time,duration_seconds,result\n")
+    else:
+        with open(PYTEST_TIMING_OUTPUT_PATH, "a") as f:
+            f.write("------------------ -------------------------------------\n")
+
+
+def pytest_addoption(parser: pytest.Parser) -> None:
+    group = parser.getgroup("timing")
+    group.addoption(
+        "--timing-file",
+        action="store",
+        dest="timing_file",
+        default=PYTEST_TIMING_OUTPUT_PATH,
+        help="Specify a path to the pytest timing output file",
+    )
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -28,11 +45,11 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo) -> None:
         if call.excinfo is None:
             _test_results[item.nodeid] = "P"  # Passed
         elif call.excinfo.typename == "AssertionError":
-            _test_results[item.nodeid] = "F"  # Failed assert
+            _test_results[item.nodeid] = "Fa"  # Failed assert
         else:
-            _test_results[item.nodeid] = "E"  # Error/exception
+            _test_results[item.nodeid] = "Fx"  # Error/exception
     elif call.when == "setup" and call.excinfo is not None:
-        _test_results[item.nodeid] = "E"  # Error during setup
+        _test_results[item.nodeid] = "Fe"  # Error during setup
     elif call.when == "setup" and item.get_closest_marker("skip"):
         _test_results[item.nodeid] = "S"  # Skipped
 
@@ -45,7 +62,7 @@ def pytest_runtest_teardown(item: pytest.Item) -> None:
     result = _test_results.pop(item.nodeid, "E")  # Default to E if no result found
     duration = end_time - start_time
 
-    with open("test_timings.txt", "a") as f:
+    with open(PYTEST_TIMING_OUTPUT_PATH, "a") as f:
         f.write(
             f"{item.nodeid},{start_time.strftime('%Y-%m-%d %H:%M:%S.%f')},"
             f"{end_time.strftime('%Y-%m-%d %H:%M:%S.%f')},{duration.total_seconds():.3f},{result}\n"
