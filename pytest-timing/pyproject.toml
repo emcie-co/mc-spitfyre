@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytest-timing"
-version = "0.1.0"
+version = "0.1.1"
 description = "A pytest plugin for recording test execution times and results"
 authors = ["MCNatsu <nathan@emcie.co>"]
 readme = "README.md"
@@ -21,5 +21,3 @@ test_timing = "pytest_timing.plugin"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-

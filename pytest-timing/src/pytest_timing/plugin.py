@@ -1,23 +1,12 @@
 from datetime import datetime
 import os
 import pytest
-from _pytest.reports import TestReport
 
 # Global dictionary to store test start times and results
 _test_start_times: dict[str, datetime] = {}
 _test_results: dict[str, str] = {}
 
 PYTEST_TIMING_OUTPUT_PATH = "test_timing.csv"
-
-
-def pytest_configure(config: pytest.Config) -> None:
-    """Create file with header if it doesn't exist, otherwise do nothing"""
-    if not os.path.exists(PYTEST_TIMING_OUTPUT_PATH):
-        with open(PYTEST_TIMING_OUTPUT_PATH, "w") as f:
-            f.write("test_name,start_time,end_time,duration_seconds,result\n")
-    else:
-        with open(PYTEST_TIMING_OUTPUT_PATH, "a") as f:
-            f.write("------------------ -------------------------------------\n")
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -29,6 +18,20 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=PYTEST_TIMING_OUTPUT_PATH,
         help="Specify a path to the pytest timing output file",
     )
+
+
+timing_file_path: str = PYTEST_TIMING_OUTPUT_PATH
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Create file with header if it doesn't exist, otherwise do nothing"""
+    timing_file_path = config.getoption("timing_file")
+    if not os.path.exists(config.getoption("timing_file")):
+        with open(timing_file_path, "w") as f:
+            f.write("test_name,start_time,end_time,duration_seconds,result\n")
+    else:
+        with open(timing_file_path, "a") as f:
+            f.write("------------------ -------------------------------------\n")
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -62,7 +65,7 @@ def pytest_runtest_teardown(item: pytest.Item) -> None:
     result = _test_results.pop(item.nodeid, "E")  # Default to E if no result found
     duration = end_time - start_time
 
-    with open(PYTEST_TIMING_OUTPUT_PATH, "a") as f:
+    with open(timing_file_path, "a") as f:
         f.write(
             f"{item.nodeid},{start_time.strftime('%Y-%m-%d %H:%M:%S.%f')},"
             f"{end_time.strftime('%Y-%m-%d %H:%M:%S.%f')},{duration.total_seconds():.3f},{result}\n"
