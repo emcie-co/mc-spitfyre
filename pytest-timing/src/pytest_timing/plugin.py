@@ -37,7 +37,8 @@ class TimingPlugin:
         self.timing_file_path = Path(timing_file_path)
 
         if not self.timing_file_path.exists():
-            self.timing_file_path.mkdir(parents=True, exist_ok=True)
+            self.timing_file_path.parent.mkdir(parents=True, exist_ok=True)
+            self.timing_file_path.touch(exist_ok=True)
             with self.timing_file_path.open("w") as f:
                 f.write("test_name,start_time,end_time,duration_seconds,result\n")
         else:
