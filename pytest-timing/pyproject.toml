@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytest-timing"
-version = "0.1.4"
+version = "0.1.5"
 description = "A pytest plugin for recording test execution times and results"
 authors = ["MCNatsu <nathan@emcie.co>"]
 readme = "README.md"
